@@ -19,8 +19,8 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container">
-                <a class="navbar-brand">
-                Lista de Tareas
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    <i class="fas fa-tasks me-2"></i>Inicio
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
