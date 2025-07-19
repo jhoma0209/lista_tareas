@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 
 class Tareas extends Component
 {    
-    #[Layout('layouts.app')] 
+    //#[Layout('layouts.app')] 
     
     public $tareas = [];
     public $tareaSeleccionada = null;
