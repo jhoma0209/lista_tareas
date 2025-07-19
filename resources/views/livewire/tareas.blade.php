@@ -80,6 +80,7 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
+                                <th>Referencia</th>
                                 <th>Nombre</th>
                                 <th>Descripción</th>
                                 <th>Fecha</th>
@@ -90,6 +91,7 @@
                         <tbody>
                             @foreach($tareas as $tarea)
                                 <tr>
+                                    <td>{{ $tarea->referencia}}</td>
                                     <td>{{ $tarea->nombre }}</td>
                                     <td>{{ Str::limit($tarea->descripcion, 40) }}</td>
                                     <td>{{ $tarea->created_at->format('d/m/Y') }}</td>
@@ -164,6 +166,7 @@
                     <div class="modal-body">
                         <form wire:submit.prevent="guardarTarea">
                             <div class="row g-3">
+
                                 <div class="col-md-12">
                                     <label for="nombre" class="form-label">Nombre</label>
                                     <input type="text" class="form-control" id="nombre" 

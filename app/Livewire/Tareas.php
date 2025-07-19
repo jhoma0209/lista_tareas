@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use Livewire\Component;
 use App\Services\TareaService;
@@ -9,6 +9,7 @@ use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
+
 class Tareas extends Component
 {
     use WithPagination;

@@ -11,6 +11,7 @@ class Tarea extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'referencia',
         'nombre',
         'descripcion',
