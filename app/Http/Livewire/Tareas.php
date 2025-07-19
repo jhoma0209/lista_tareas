@@ -6,28 +6,32 @@ use Livewire\Component;
 use App\Services\TareaService;
 use App\Models\Tarea;
 use Livewire\Attributes\Layout;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
-
 class Tareas extends Component
-{    
+{
+    use WithPagination;
+
     public $tareas = [];
-    public $tareaSeleccionada = null;
+    public $tareaSeleccionada = [
+        'nombre' => '',
+        'descripcion' => '',
+        'estado' => 'sin_iniciar'
+    ];
     public $mostrarModal = false;
     public $mostrarFiltros = false;
     public $filtros = [
         'estado' => '',
         'fecha_desde' => '',
         'fecha_hasta' => '',
-        'completadas_desde' => '',
-        'completadas_hasta' => ''
     ];
 
     protected $tareaService;
 
-    public function boot()
+    public function boot(TareaService $tareaService)
     {
-        $this->tareaService = app(TareaService::class);
+        $this->tareaService = $tareaService;
     }
 
     public function mount()
@@ -37,23 +41,33 @@ class Tareas extends Component
 
     public function cargarTareas()
     {
-        $this->tareas = collect($this->tareaService->obtenerTodasLasTareas());
+        $this->tareas = $this->tareaService->obtenerTodasLasTareas();
     }
 
     public function cargarTareasEnProceso()
     {
-        $this->tareas = collect($this->tareaService->obtenerTareasEnProceso());
+        $this->tareas = $this->tareaService->obtenerTareasEnProceso();
     }
 
     public function abrirModalCrear()
     {
-        $this->tareaSeleccionada = new Tarea();
+        $this->tareaSeleccionada = [
+            'nombre' => '',
+            'descripcion' => '',
+            'estado' => 'sin_iniciar'
+        ];
         $this->mostrarModal = true;
     }
 
     public function abrirModalEditar($tareaId)
     {
-        $this->tareaSeleccionada = Tarea::find($tareaId);
+        $tarea = Tarea::find($tareaId);
+        $this->tareaSeleccionada = [
+            'id' => $tarea->id,
+            'nombre' => $tarea->nombre,
+            'descripcion' => $tarea->descripcion,
+            'estado' => $tarea->estado
+        ];
         $this->mostrarModal = true;
     }
 
@@ -66,17 +80,18 @@ class Tareas extends Component
 
     public function guardarTarea()
     {
-        $datos = $this->validate([
+        $validated = $this->validate([
             'tareaSeleccionada.nombre' => 'required|string|max:255',
             'tareaSeleccionada.descripcion' => 'required|string',
             'tareaSeleccionada.estado' => 'required|in:sin_iniciar,en_proceso,completada,anulada',
         ]);
 
-        if ($this->tareaSeleccionada->id) {
-            $this->tareaService->actualizarTarea($this->tareaSeleccionada, $datos['tareaSeleccionada']);
+        if (isset($this->tareaSeleccionada['id'])) {
+            $tarea = Tarea::find($this->tareaSeleccionada['id']);
+            $this->tareaService->actualizarTarea($tarea, $validated['tareaSeleccionada']);
             session()->flash('mensaje', 'Tarea actualizada correctamente');
         } else {
-            $this->tareaService->crearTarea($datos['tareaSeleccionada']);
+            $this->tareaService->crearTarea($validated['tareaSeleccionada']);
             session()->flash('mensaje', 'Tarea creada correctamente');
         }
 
@@ -106,8 +121,11 @@ class Tareas extends Component
 
     public function aplicarFiltros()
     {
-        $filtrosLimpios = array_filter($this->filtros);
-        $this->tareas = collect($this->tareaService->filtrarTareas($filtrosLimpios));
+        $filtrosLimpios = array_filter($this->filtros, function($value) {
+            return $value !== null && $value !== '';
+        });
+        
+        $this->tareas = $this->tareaService->filtrarTareas($filtrosLimpios);
         $this->mostrarFiltros = false;
     }
 

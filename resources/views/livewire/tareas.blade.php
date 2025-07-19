@@ -22,7 +22,7 @@
             <div class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">Estado</label>
-                    <select class="form-select form-select-sm" wire:model="filtros.estado">
+                    <select class="form-select form-select-sm" wire:model.live="filtros.estado">
                         <option value="">Todos</option>
                         <option value="sin_iniciar">Sin iniciar</option>
                         <option value="en_proceso">En proceso</option>
@@ -32,11 +32,11 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Fecha creación desde</label>
-                    <input type="date" class="form-control form-control-sm" wire:model="filtros.fecha_desde">
+                    <input type="date" class="form-control form-control-sm" wire:model.live="filtros.fecha_desde">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Fecha creación hasta</label>
-                    <input type="date" class="form-control form-control-sm" wire:model="filtros.fecha_hasta">
+                    <input type="date" class="form-control form-control-sm" wire:model.live="filtros.fecha_hasta">
                 </div>
                 <div class="col-md-3 d-flex align-items-end">
                     <button class="btn btn-sm btn-primary me-2" wire:click="aplicarFiltros">
@@ -70,12 +70,12 @@
                     </button>
                 </div>
                 <div class="text-muted">
-                    Mostrando {{ is_countable($tareas) ? count($tareas) : 0 }} tareas
+                    Mostrando {{ count($tareas) }} tareas
                 </div>
             </div>
             
             <!-- Lista de Tareas -->
-            @if(is_countable($tareas) && count($tareas) > 0)
+            @if(count($tareas) > 0)
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
@@ -92,11 +92,11 @@
                                 <tr>
                                     <td>{{ $tarea->nombre }}</td>
                                     <td>{{ Str::limit($tarea->descripcion, 40) }}</td>
-                                    <td>{{ $tarea->fecha_creacion->format('d/m/Y') }}</td>
+                                    <td>{{ $tarea->created_at->format('d/m/Y') }}</td>
                                     <td>
-                                        <span class="badge bg-{{ $tarea->obtenerColorEstado() }}">
-                                            <i class="fas fa-{{ $tarea->obtenerIconoEstado() }} me-1"></i>
-                                            {{ $tarea->obtenerEstadoFormateado() }}
+                                        <span class="badge bg-{{ $this->obtenerColorEstado($tarea->estado) }}">
+                                            <i class="fas fa-{{ $this->obtenerIconoEstado($tarea->estado) }} me-1"></i>
+                                            {{ $this->obtenerNombreEstado($tarea->estado) }}
                                         </span>
                                     </td>
                                     <td class="text-end">
@@ -156,8 +156,8 @@
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white">
                         <h5 class="modal-title">
-                            <i class="fas fa-{{ $tareaSeleccionada && $tareaSeleccionada->id ? 'edit' : 'plus' }} me-2"></i>
-                            {{ $tareaSeleccionada && $tareaSeleccionada->id ? 'Editar Tarea' : 'Nueva Tarea' }}
+                            <i class="fas fa-{{ isset($tareaSeleccionada['id']) ? 'edit' : 'plus' }} me-2"></i>
+                            {{ isset($tareaSeleccionada['id']) ? 'Editar Tarea' : 'Nueva Tarea' }}
                         </h5>
                         <button type="button" class="btn-close btn-close-white" wire:click="cerrarModal"></button>
                     </div>
@@ -207,7 +207,7 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('livewire:load', function() {
+    document.addEventListener('livewire:init', function() {
         // Inicializar tooltips de Bootstrap
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
