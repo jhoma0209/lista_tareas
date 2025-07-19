@@ -9,7 +9,7 @@ use App\Services\TareaService;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Registre cualquier servicio de aplicación.
      */
     public function register(): void
     {
@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Arranque cualquier servicio de aplicación.
      */
     public function boot(): void
     {
