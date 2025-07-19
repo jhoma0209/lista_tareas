@@ -7,10 +7,10 @@ use App\Services\TareaService;
 use App\Models\Tarea;
 use Livewire\Attributes\Layout;
 
+#[Layout('layouts.app')]
+
 class Tareas extends Component
 {    
-    //#[Layout('layouts.app')] 
-    
     public $tareas = [];
     public $tareaSeleccionada = null;
     public $mostrarModal = false;
@@ -25,7 +25,7 @@ class Tareas extends Component
 
     protected $tareaService;
 
-    public function __construct()
+    public function boot()
     {
         $this->tareaService = app(TareaService::class);
     }
@@ -37,17 +37,17 @@ class Tareas extends Component
 
     public function cargarTareas()
     {
-        $this->tareas = $this->tareaService->obtenerTodasLasTareas();
+        $this->tareas = collect($this->tareaService->obtenerTodasLasTareas());
     }
 
     public function cargarTareasEnProceso()
     {
-        $this->tareas = $this->tareaService->obtenerTareasEnProceso();
+        $this->tareas = collect($this->tareaService->obtenerTareasEnProceso());
     }
 
     public function abrirModalCrear()
     {
-        $this->tareaSeleccionada = null;
+        $this->tareaSeleccionada = new Tarea();
         $this->mostrarModal = true;
     }
 
@@ -87,20 +87,27 @@ class Tareas extends Component
     public function cambiarEstado($tareaId, $estado)
     {
         $tarea = Tarea::find($tareaId);
-        $this->tareaService->actualizarTarea($tarea, ['estado' => $estado]);
-        $this->cargarTareas();
+        if ($tarea) {
+            $this->tareaService->actualizarTarea($tarea, ['estado' => $estado]);
+            $this->cargarTareas();
+            session()->flash('mensaje', 'Estado actualizado correctamente');
+        }
     }
 
     public function eliminarTarea($tareaId)
     {
         $tarea = Tarea::find($tareaId);
-        $this->tareaService->eliminarTarea($tarea);
-        $this->cargarTareas();
+        if ($tarea) {
+            $this->tareaService->eliminarTarea($tarea);
+            $this->cargarTareas();
+            session()->flash('mensaje', 'Tarea eliminada correctamente');
+        }
     }
 
     public function aplicarFiltros()
     {
-        $this->tareas = $this->tareaService->filtrarTareas(array_filter($this->filtros));
+        $filtrosLimpios = array_filter($this->filtros);
+        $this->tareas = collect($this->tareaService->filtrarTareas($filtrosLimpios));
         $this->mostrarFiltros = false;
     }
 
@@ -119,6 +126,28 @@ class Tareas extends Component
             'completada' => 'check-circle',
             'anulada' => 'ban',
             default => 'question-circle',
+        };
+    }
+
+    public function obtenerColorEstado($estado): string
+    {
+        return match($estado) {
+            'sin_iniciar' => 'secondary',
+            'en_proceso' => 'warning',
+            'completada' => 'success',
+            'anulada' => 'danger',
+            default => 'secondary',
+        };
+    }
+
+    public function obtenerNombreEstado($estado): string
+    {
+        return match($estado) {
+            'sin_iniciar' => 'Sin iniciar',
+            'en_proceso' => 'En proceso',
+            'completada' => 'Completada',
+            'anulada' => 'Anulada',
+            default => 'Desconocido',
         };
     }
 

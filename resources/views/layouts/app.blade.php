@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Lista de Tareas')</title>
+    <title>{{ $title ?? 'Lista de Tareas' }}</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,7 +20,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Inicio
+                    <i class="fa fa-home fa-fw" aria-hidden="true"></i>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
@@ -39,7 +39,11 @@
 
         <!-- Contenido Principal -->
         <main class="container py-4 flex-grow-1">
+            <!-- Para páginas Blade tradicionales -->
             @yield('content')
+            
+            <!-- Para componentes Livewire -->
+            {{ $slot ?? '' }}
         </main>
 
         <!-- Footer -->

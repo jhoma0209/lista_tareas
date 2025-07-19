@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Tarea extends Model
 {
@@ -13,19 +14,27 @@ class Tarea extends Model
         'referencia',
         'nombre',
         'descripcion',
+        'estado',
         'fecha_creacion',
-        'fecha_completada',
-        'estado'
+        'fecha_completada'
     ];
 
     protected $casts = [
-        'fecha_creacion' => 'date',
-        'fecha_completada' => 'date',
+        'fecha_creacion' => 'datetime',
+        'fecha_completada' => 'datetime',
     ];
 
-    /**
-     * Obtener el estado formateado
-     */
+    public function obtenerColorEstado(): string
+    {
+        return match($this->estado) {
+            'sin_iniciar' => 'secondary',
+            'en_proceso' => 'warning',
+            'completada' => 'success',
+            'anulada' => 'danger',
+            default => 'secondary',
+        };
+    }
+
     public function obtenerEstadoFormateado(): string
     {
         return match($this->estado) {
@@ -37,17 +46,14 @@ class Tarea extends Model
         };
     }
 
-    /**
-     * Obtener el color del estado para Bootstrap
-     */
-    public function obtenerColorEstado(): string
+    public function obtenerIconoEstado(): string
     {
         return match($this->estado) {
-            'sin_iniciar' => 'secondary',
-            'en_proceso' => 'primary',
-            'completada' => 'success',
-            'anulada' => 'danger',
-            default => 'light',
+            'sin_iniciar' => 'clock',
+            'en_proceso' => 'spinner',
+            'completada' => 'check-circle',
+            'anulada' => 'ban',
+            default => 'question-circle',
         };
     }
 }

@@ -7,7 +7,7 @@
     <div class="card shadow-sm">
         <div class="card-header text-white bg-dark">
             <h5 class="mb-0">
-                <i class="fas fa-home me-2"></i>Bienvenido al Gestor de Tareas
+                Bienvenido al Gestor de Tareas
             </h5>
         </div>
         <div class="card-body">
