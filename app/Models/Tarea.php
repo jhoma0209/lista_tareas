@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Carbon\Carbon;
 
 class Tarea extends Model
@@ -17,13 +18,19 @@ class Tarea extends Model
         'descripcion',
         'estado',
         'fecha_creacion',
-        'fecha_completada'
+        'fecha_completada',
+        'user_id'
     ];
 
     protected $casts = [
         'fecha_creacion' => 'datetime',
         'fecha_completada' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function obtenerColorEstado(): string
     {

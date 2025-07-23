@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Services\TareaService;
 use App\Models\Tarea;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 
@@ -15,6 +16,7 @@ class Tareas extends Component
     use WithPagination;
 
     public $tareas = [];
+    public $users;
     public $tareaSeleccionada = [
         'nombre' => '',
         'descripcion' => '',
@@ -37,6 +39,7 @@ class Tareas extends Component
 
     public function mount()
     {
+        $this->users = User::all();
         $this->cargarTareas();
     }
 
@@ -85,6 +88,7 @@ class Tareas extends Component
             'tareaSeleccionada.nombre' => 'required|string|max:255',
             'tareaSeleccionada.descripcion' => 'required|string',
             'tareaSeleccionada.estado' => 'required|in:sin_iniciar,en_proceso,completada,anulada',
+            'tareaSeleccionada.user_id' => 'nullable|exists:users,id',
         ]);
 
         if (isset($this->tareaSeleccionada['id'])) {

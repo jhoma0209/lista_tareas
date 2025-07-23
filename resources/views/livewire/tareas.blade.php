@@ -80,6 +80,7 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
+                                <th>Usuario</th>
                                 <th>Referencia</th>
                                 <th>Nombre</th>
                                 <th>Descripción</th>
@@ -91,6 +92,12 @@
                         <tbody>
                             @foreach($tareas as $tarea)
                                 <tr>
+                                    <td>@if($tarea->user)
+                                        {{ $tarea->user->name }}
+                                        @else
+                                            <span class="text-muted">Sin asignar</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $tarea->referencia}}</td>
                                     <td>{{ $tarea->nombre }}</td>
                                     <td>{{ Str::limit($tarea->descripcion, 40) }}</td>
@@ -189,6 +196,15 @@
                                         @endforeach
                                     </select>
                                     @error('tareaSeleccionada.estado') <div class="text-danger small">{{ $message }}</div> @enderror
+                                </div>
+                                    <div class="col-md-6">
+                                    <label for="usuario" class="form-label">Asignar a</label>
+                                    <select class="form-select" id="usuario" wire:model="tareaSeleccionada.user_id">
+                                        <option value="">Seleccionar usuario</option>
+                                        @foreach($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             
